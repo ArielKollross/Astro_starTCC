@@ -11,3 +11,5 @@ For compilate the file, you must do it in terminal: gcc -o name name.c -lm
 if something wrong with "stdio.h", run: find /usr/include/ -name "stdio.h"
 
 if nothing return, run :  sudo apt install --reinstall build-essential
+
+After this, run: ./name table.dat > output.dat
