@@ -13,6 +13,7 @@
 #define TRAD (M_PI / 180.0) // conversão de graus para radianos
 #define NMAX 8              // numero de corpos
 #define NDIM 3              // Dimensões espaciais
+#define MSUM 1.9891e30      //[kg] massa solar
 
 //====================================================================================
 
@@ -20,7 +21,7 @@ int main(int argc, char *argv[])
 {
 
   int i, j, k;
-  int aux;                      // [  ]
+  double aux;                      // [  ]
   double t;                     // [  ]
   double t_sim;                 // [  ]
   double dt;                    // [  ]
@@ -68,7 +69,7 @@ int main(int argc, char *argv[])
   t_sim = ANO * 1e5;
 
   //Condições iniciais
-  mass[1] = 1.99e30; // Corpo 0 - Sol
+  mass[1] = MSUM; // Corpo 0 - Sol
   r[1][1] = 0.0;     //[  ]
   r[1][2] = 0.0;
   r[1][3] = 0.0;
@@ -97,7 +98,7 @@ int main(int argc, char *argv[])
     v[i][1] = newscanf_le_numero(0, "Velocidade em x") * 1e3; // C. Galaticas [m/s]
     v[i][2] = newscanf_le_numero(0, "Velocidade em y") * 1e3;
     v[i][3] = newscanf_le_numero(0, "Velocidade em z") * 1e3;
-    //mass[i+1][j] = newscanf_le_numero(0,"massa" ) ;
+    mass[1][j] = newscanf_le_numero(0,"massa" ) * MSUM ;
 
     // passos necessario para negativar as colunas do DEm
     if (DEd < 0)
@@ -166,8 +167,7 @@ int main(int argc, char *argv[])
   // INICIALIZAÇÃO DO METODO DE VERLET
   for (i = 1; i <= NMAX; i++)
   {
-    for (k = 1; k <= NDIM; k++)
-      r_a[i][k] = r[i][k] - v[i][k] * dt;
+    for (k = 1; k <= NDIM; k++) r_a[i][k] = r[i][k] - v[i][k] * dt;
   } //end for i
 
   for (t = 0; t <= t_sim; t = t + dt)
@@ -177,13 +177,13 @@ int main(int argc, char *argv[])
     {
       // impressão de dados
 
-      //printf("%g ", t       )			   	            ; // $1
-      //printf("%d ", i	      )				            ; // $2
-      //printf("%g ", Rs[i]/ aluz )			            ; // $3
-      //for( k = 1 ; k <= NDIM ; k++) printf("%g ", r[i][k]/ aluz  ); // $4 $5 $6 plot depois set view equal
-      //for( k = 1 ; k <= NDIM ; k++) printf("%g ", v[i][k]        ); // $7 $8 $9
-      //for( k = 1 ; k <= NDIM ; k++) printf("%g ", densidade      ); // $10 plot "" u 10:1
-      //printf("\n ")					            ;
+      printf("%g ", t)			   	                                  ; // $1
+      printf("%d ", i)				                                    ; // $2
+      printf("%g ", Rs[i]/ aluz )			                            ; // $3
+      for( k = 1 ; k <= NDIM ; k++) printf("%g ", r[i][k]/ aluz  ); // $4 $5 $6 plot depois set view equal
+      for( k = 1 ; k <= NDIM ; k++) printf("%g ", v[i][k]        ); // $7 $8 $9
+     // for( k = 1 ; k <= NDIM ; k++) printf("%g ", densidade      ); // $10 plot "" u 10:1
+      printf("\n ");
     } // end for i
 
     //---------------------------------------------------------------------------------------
@@ -207,8 +207,7 @@ int main(int argc, char *argv[])
       dr1 = sqrt(dr2); // módulo da diferença de posição
     }                  // end j
 
-    for (k = 1, dsr = 0.0; k <= NDIM; k++)
-      dsr += ds[k] * dr[k]; // produto interno
+    for (k = 1, dsr = 0.0; k <= NDIM; k++) dsr += ds[k] * dr[k]; // produto interno
     aux3 = dsr / (ds1 * dr1);
 
     printf("%g %g \n", t, (180. * acos(aux) / M_PI));
